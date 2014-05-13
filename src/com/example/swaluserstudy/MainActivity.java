@@ -30,8 +30,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
 
-public class MainActivity extends Activity implements OnKeyListener,
-		TextWatcher {
+public class MainActivity extends Activity implements OnKeyListener, TextWatcher {
 	/*
 	 * Layout komponenten
 	 */
@@ -39,7 +38,7 @@ public class MainActivity extends Activity implements OnKeyListener,
 	EditText textEntered;
 	String userText;
 	/*
-	 * variablen zum messen der benˆtigten Zeit
+	 * variablen zum messen der ben√∂tigten Zeit
 	 */
 	long timestampStart;
 	long timestampEnd;
@@ -52,20 +51,20 @@ public class MainActivity extends Activity implements OnKeyListener,
 				// soll
 
 	int lastSpace = 0;// an welcher position befindet sich das letzte
-						// lererzeichen, dient dazu wˆrter zu markieren
-	int nextSpace = 0;// an welcher position befindet sich das n‰chste
-						// lererzeichen, dient dazu wˆrter zu markieren
+						// lererzeichen, dient dazu w√∂rter zu markieren
+	int nextSpace = 0;// an welcher position befindet sich das n√§chste
+						// lererzeichen, dient dazu w√∂rter zu markieren
 
 	String textFile1 = "UseCaseTexts/test3.txt"; // txt dateien im ordner Assets
 	String studyText; // Variable speichert den text an dem die testperson
 						// gemessen wird
 
-	int selected = 0; // ausgew‰hlter index des textes
-	int selectedKeyboard = 0;// ausgew‰hlter index des eyboards
+	int selected = 0; // ausgew√§hlter index des textes
+	int selectedKeyboard = 0;// ausgew√§hlter index des eyboards
 	int id = 0; // standard id
-	String keyboard = ""; // Name des ausgew‰‰‰‰hl‰ten‰ keybo‰ards
-	String[] fileList; // array der mˆlichen use case texte
-	String[] keyboards; // array der mˆglichen keyboard layouts im moment DVORA
+	String keyboard = ""; // Name des ausgew√§√§√§√§hl√§ten√§ keybo√§ards
+	String[] fileList; // array der m√∂lichen use case texte
+	String[] keyboards; // array der m√∂glichen keyboard layouts im moment DVORA
 						// und NEO
 
 	public MainActivity() {
@@ -107,7 +106,7 @@ public class MainActivity extends Activity implements OnKeyListener,
 	}
 
 	/*
-	 * nachdem die Dialoge ausgef¸llt wurden wird der usecase text initialisiert
+	 * nachdem die Dialoge ausgef√ºllt wurden wird der usecase text initialisiert
 	 */
 	private void initialize() {
 		lastSpace = 0;
@@ -122,8 +121,11 @@ public class MainActivity extends Activity implements OnKeyListener,
 													// zur
 													// Orientierung
 
-		text.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), lastSpace,
-				nextSpace, 0);// F‰rbe zu schreibendes Wort FETT
+		text.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), lastSpace, nextSpace, 0);// F√§rbe
+																								// zu
+																								// schreibendes
+																								// Wort
+																								// FETT
 		// text.setSpan(new ForegroundColorSpan(Color.GREEN), lastSpace,
 		// nextSpace, 0);
 		textToEnter.setText(text, BufferType.SPANNABLE);
@@ -131,7 +133,7 @@ public class MainActivity extends Activity implements OnKeyListener,
 	}
 
 	/*
-	 * ermittelt ob der Text vollst‰‰‰‰‰‰‰‰ndig eingegeben wurde
+	 * ermittelt ob der Text vollst√§ndig eingegeben wurde
 	 */
 	protected boolean isLastKey(int textLength, int inputLength) {
 		if (textLength == inputLength)
@@ -140,7 +142,7 @@ public class MainActivity extends Activity implements OnKeyListener,
 	}
 
 	/*
-	 * Funktion l‰d text datei aus dem assetts ordner; hier kommen unsere
+	 * Funktion l√§d text datei aus dem assetts ordner; hier kommen unsere
 	 * Beispieltexte rein
 	 */
 
@@ -179,14 +181,13 @@ public class MainActivity extends Activity implements OnKeyListener,
 	}
 
 	@Override
-	public void beforeTextChanged(CharSequence s, int start, int count,
-			int after) {
+	public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 		// TODO Auto-generated method stub
 
 	}
 
-	// funktion findet immer n‰chstes leerzeichen um dadurch ein wo‰rt ‰zu
-	// marki‰eren
+	// funktion findet immer n√§chstes leerzeichen um dadurch ein wo√§rt √§zu
+	// marki√§eren
 	public int findNextSpace(String string, int start) {
 
 		for (int i = start; i < string.length(); i++) {
@@ -204,10 +205,9 @@ public class MainActivity extends Activity implements OnKeyListener,
 	public void onTextChanged(CharSequence s, int start, int before, int count) {
 		// if (textToEnter.length() <= textEntered.getText().length()) {
 		// Log.i("text", textToEnter.getText().charAt(counter) + "");
-		Log.i("textLength", textToEnter.getText().length() + ";"
-				+ textEntered.getText().length());
+		Log.i("textLength", textToEnter.getText().length() + ";" + textEntered.getText().length());
 		if (nextSpace == counter)
-			lastSpace = counter; // sobald n‰chstes wort erreicht ist setze
+			lastSpace = counter; // sobald n√§chstes wort erreicht ist setze
 									// lastSpace auf das alte nextSpace
 		nextSpace = findNextSpace(studyText, counter + 1);// ermittle neues
 															// nextSpace
@@ -222,17 +222,20 @@ public class MainActivity extends Activity implements OnKeyListener,
 																			// Buchstabben
 																			// zur
 																			// Orientierung
-			text.setSpan(new ForegroundColorSpan(Color.GRAY), 0, counter + 1, 0);// F‰rbe
+			text.setSpan(new ForegroundColorSpan(Color.GRAY), 0, counter + 1, 0);// F√§rbe
 																					// bereits
 																					// geschriebene
 																					// buchstaben
 																					// grau
-			text.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),
-					lastSpace, nextSpace, 0);// F‰rbe zu schreibendes Wort FETT
+			text.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), lastSpace, nextSpace, 0);// F√§rbe
+																									// zu
+																									// schreibendes
+																									// Wort
+																									// FETT
 			// text.setSpan(new ForegroundColorSpan(Color.GREEN), lastSpace,
 			// nextSpace, 0);
 			textToEnter.setText(text, BufferType.SPANNABLE); // Formatierungen
-																// ¸bernehmen
+																// √ºbernehmen
 			counter++;
 		}
 		// }
@@ -245,21 +248,18 @@ public class MainActivity extends Activity implements OnKeyListener,
 
 		}
 
-		// sobald letzter keystroke get‰tigt wurde startet der EndDialog mit den
+		// sobald letzter keystroke get√§tigt wurde startet der EndDialog mit den
 		// Ergebnissen
 		if (isLastKey(textToEnter.length(), textEntered.getText().length())) {
 			timestampEnd = System.currentTimeMillis();
 			Log.i("timestampend", timestampEnd + "");
 			duration = timestampEnd - timestampStart;
-			double mistakes = compareStrings(textEntered.getText().toString(),
-					textToEnter.getText().toString());
+			double mistakes = compareStrings(textEntered.getText().toString(), textToEnter.getText().toString());
 			buildEndDialog(id, duration, mistakes);
 
 			textEntered.setFilters(new InputFilter[] { new InputFilter() {
-				public CharSequence filter(CharSequence src, int start,
-						int end, Spanned dst, int dstart, int dend) {
-					return src.length() < 1 ? dst.subSequence(dstart, dend)
-							: "";
+				public CharSequence filter(CharSequence src, int start, int end, Spanned dst, int dstart, int dend) {
+					return src.length() < 1 ? dst.subSequence(dstart, dend) : "";
 				}
 			} });
 
@@ -270,12 +270,12 @@ public class MainActivity extends Activity implements OnKeyListener,
 	}
 
 	/*
-	 * Erstellen der verschiednenen Dialoge f¸r den Anfang und das Ende
+	 * Erstellen der verschiednenen Dialoge f√ºr den Anfang und das Ende
 	 */
 
 	/*
-	 * Am anfang kann man die ID, die gew‰hlte Tastatur eingeben und einene
-	 * Beispieltext ausw‰hlen, am Ende wird das Ergebnis angezeigt. mit klick
+	 * Am anfang kann man die ID, die gew√§hlte Tastatur eingeben und einene
+	 * Beispieltext ausw√§hlen, am Ende wird das Ergebnis angezeigt. mit klick
 	 * auf ok startet die activity neu
 	 */
 
@@ -305,8 +305,8 @@ public class MainActivity extends Activity implements OnKeyListener,
 	}
 
 	/*
-	 * Dialog zum ausw‰hlen des benutzten keyboards gespeichert sind die
-	 * mˆglichen Keyboards in res-> values-> keyboards als String array
+	 * Dialog zum ausw√§hlen des benutzten keyboards gespeichert sind die
+	 * m√∂glichen Keyboards in res-> values-> keyboards als String array
 	 */
 	public void buildKeyboardDialog() {
 
@@ -319,7 +319,7 @@ public class MainActivity extends Activity implements OnKeyListener,
 																			// zum
 																			// anzeigen
 																			// der
-																			// mˆglichen
+																			// m√∂glichen
 																			// keyboards
 																			// in
 																			// einer
@@ -380,22 +380,20 @@ public class MainActivity extends Activity implements OnKeyListener,
 
 	/*
 	 * Dialog zum anzeigen der ergebnisse Activity startet neu nachdem auf
-	 * restart gedr¸ckt wird; ergebnisse werden verworfen
+	 * restart gedr√ºckt wird; ergebnisse werden verworfen
 	 */
 	public void buildEndDialog(int id, long duration, double mistakes) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setPositiveButton("RESTART",
-				new DialogInterface.OnClickListener() {
+		builder.setPositiveButton("RESTART", new DialogInterface.OnClickListener() {
 
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						restartActivity();
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				restartActivity();
 
-					}
-				});
+			}
+		});
 
-		builder.setMessage("ID:" + id + ";" + "Time: " + duration
-				+ "; Accuracy: " + mistakes + "; Keyboard: " + keyboard);
+		builder.setMessage("ID:" + id + ";" + "Time: " + duration + "; Accuracy: " + mistakes + "; Keyboard: " + keyboard);
 		AlertDialog dialog = builder.create();
 		dialog.show();
 	}
@@ -410,8 +408,7 @@ public class MainActivity extends Activity implements OnKeyListener,
 	 * Activity neustart am ende
 	 */
 	public void restartActivity() {
-		Intent i = getBaseContext().getPackageManager()
-				.getLaunchIntentForPackage(getBaseContext().getPackageName());
+		Intent i = getBaseContext().getPackageManager().getLaunchIntentForPackage(getBaseContext().getPackageName());
 		i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		startActivity(i);
 
@@ -430,8 +427,7 @@ public class MainActivity extends Activity implements OnKeyListener,
 	public int calculateMistakes(String a, String b) {
 
 		Double accuracy = compareStrings(a, b);
-		Double calcMistakes = textToEnter.getText().length()
-				- (accuracy * textToEnter.getText().length());
+		Double calcMistakes = textToEnter.getText().length() - (accuracy * textToEnter.getText().length());
 
 		return calcMistakes.intValue();
 	}
