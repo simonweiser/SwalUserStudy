@@ -201,7 +201,7 @@ public class MainActivity extends Activity implements OnKeyListener, TextWatcher
 		return string.length() - 1;
 	}
 
-	@Override
+
 	public void onTextChanged(CharSequence s, int start, int before, int count) {
 		// if (textToEnter.length() <= textEntered.getText().length()) {
 		// Log.i("text", textToEnter.getText().charAt(counter) + "");
