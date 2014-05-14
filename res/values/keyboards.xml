@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="keyboards">
+        <item>QWERTZ</item>
         <item>DVORAK</item>
         <item>NEO</item>
     </string-array>
