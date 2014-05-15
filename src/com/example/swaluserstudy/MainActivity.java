@@ -1,7 +1,11 @@
 package com.example.swaluserstudy;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.DecimalFormat;
 
 import uk.ac.shef.wit.simmetrics.similaritymetrics.Levenshtein;
 import android.app.Activity;
@@ -12,6 +16,7 @@ import android.content.Intent;
 import android.content.res.AssetManager;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Environment;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
@@ -29,6 +34,7 @@ import android.view.View.OnKeyListener;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
+import android.widget.Toast;
 
 public class MainActivity extends Activity implements OnKeyListener, TextWatcher {
 	/*
@@ -55,7 +61,6 @@ public class MainActivity extends Activity implements OnKeyListener, TextWatcher
 	int nextSpace = 0;// an welcher position befindet sich das nächste
 						// lererzeichen, dient dazu wörter zu markieren
 
-	String textFile1 = "UseCaseTexts/test3.txt"; // txt dateien im ordner Assets
 	String studyText; // Variable speichert den text an dem die testperson
 						// gemessen wird
 
@@ -66,6 +71,12 @@ public class MainActivity extends Activity implements OnKeyListener, TextWatcher
 	String[] fileList; // array der mölichen use case texte
 	String[] keyboards; // array der möglichen keyboard layouts im moment DVORA
 						// und NEO
+
+	FileWriter fw;
+	BufferedWriter bw;
+
+	String FILENAME;
+	String COLUMN_NAMES = "ID;Keyboard;Timestamp;Duration;Accuracy;Mistakes;TextToEnter;EnteredText\n";
 
 	public MainActivity() {
 		// TODO Auto-generated constructor stub
@@ -201,7 +212,7 @@ public class MainActivity extends Activity implements OnKeyListener, TextWatcher
 		return string.length() - 1;
 	}
 
-
+	@Override
 	public void onTextChanged(CharSequence s, int start, int before, int count) {
 		// if (textToEnter.length() <= textEntered.getText().length()) {
 		// Log.i("text", textToEnter.getText().charAt(counter) + "");
@@ -254,8 +265,34 @@ public class MainActivity extends Activity implements OnKeyListener, TextWatcher
 			timestampEnd = System.currentTimeMillis();
 			Log.i("timestampend", timestampEnd + "");
 			duration = timestampEnd - timestampStart;
-			double mistakes = compareStrings(textEntered.getText().toString(), textToEnter.getText().toString());
-			buildEndDialog(id, duration, mistakes);
+			double accuracy = compareStrings(textEntered.getText().toString(), textToEnter.getText().toString());
+			int mistakes = calculateMistakes(textEntered.getText().toString(), textToEnter.getText().toString());
+
+			// in CSV datei schreiben
+			try {
+				FILENAME = id + "_" + keyboard + ".csv";
+				String root = Environment.getExternalStorageDirectory().toString();
+				File path = new File(root + "/swal_study");
+				path.mkdirs();
+				File file = new File(path, FILENAME);
+				fw = new FileWriter(file, true); // true to append to existing
+													// file
+				bw = new BufferedWriter(fw);
+				bw.append(COLUMN_NAMES);
+
+				String stringToWrite = id + ";" + keyboard + ";" + timestampStart + ";" + duration + ";" + accuracy + ";" + mistakes + ";" + fileList[selected]
+						+ ";" + textEntered.getText().toString() + ";" + "\n";
+
+				bw.append(stringToWrite);
+				bw.close();
+				fw.close();
+				MediaScannerHelp mediaScannerHelp = new MediaScannerHelp(this);
+				mediaScannerHelp.addFile(file.getAbsolutePath());
+			} catch (Exception e) {
+				Toast.makeText(getBaseContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+			}
+
+			buildEndDialog(id, duration, accuracy);
 
 			textEntered.setFilters(new InputFilter[] { new InputFilter() {
 				public CharSequence filter(CharSequence src, int start, int end, Spanned dst, int dstart, int dend) {
@@ -393,7 +430,9 @@ public class MainActivity extends Activity implements OnKeyListener, TextWatcher
 			}
 		});
 
-		builder.setMessage("ID:" + id + ";" + "Time: " + duration + "; Accuracy: " + mistakes + "; Keyboard: " + keyboard);
+		DecimalFormat df =   new DecimalFormat  ( ",##0.00" );
+		String formated = df.format(mistakes);
+		builder.setMessage("ID:" + id + ";" + "Time: " + duration + "; Accuracy: " + formated + "; Keyboard: " + keyboard);
 		AlertDialog dialog = builder.create();
 		dialog.show();
 	}
