@@ -271,8 +271,16 @@ public class MainActivity extends Activity implements OnKeyListener, TextWatcher
 			// in CSV datei schreiben
 			try {
 				FILENAME = id + "_" + keyboard + ".csv";
+
+				/** für normales device */
 				String root = Environment.getExternalStorageDirectory().toString();
 				File path = new File(root + "/swal_study");
+
+				/** für emulator (code für device auskommentieren) */
+				// File path = new
+				// File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString()
+				// + "/swal_study");
+
 				path.mkdirs();
 				File file = new File(path, FILENAME);
 				fw = new FileWriter(file, true); // true to append to existing
@@ -280,8 +288,7 @@ public class MainActivity extends Activity implements OnKeyListener, TextWatcher
 				bw = new BufferedWriter(fw);
 				bw.append(COLUMN_NAMES);
 
-				String stringToWrite = id + ";" + keyboard + ";" + timestampStart + ";" + duration + ";" + accuracy + ";" + mistakes + ";" + fileList[selected]
-						+ ";" + textEntered.getText().toString() + ";" + "\n";
+				String stringToWrite = id + ";" + keyboard + ";" + timestampStart + ";" + duration + ";" + accuracy + ";" + mistakes + ";" + fileList[selected] + ";" + textEntered.getText().toString() + "\n";
 
 				bw.append(stringToWrite);
 				bw.close();
@@ -351,23 +358,15 @@ public class MainActivity extends Activity implements OnKeyListener, TextWatcher
 
 		alert.setTitle("Keyboard");
 
-		alert.setSingleChoiceItems(keyboards, 0, new OnClickListener() { // singlechoice
-																			// item
-																			// zum
-																			// anzeigen
-																			// der
-																			// möglichen
-																			// keyboards
-																			// in
-																			// einer
-																			// Liste
+		// singlechoice item zum anzeigen der möglichen keyboards in einer Liste
+		alert.setSingleChoiceItems(keyboards, 0, new OnClickListener() {
 
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						// TODO Auto-generated method stub
-						selectedKeyboard = which;
-					}
-				});
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
+				selectedKeyboard = which;
+			}
+		});
 		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int whichButton) {
 				keyboard = keyboards[selectedKeyboard];
@@ -430,7 +429,7 @@ public class MainActivity extends Activity implements OnKeyListener, TextWatcher
 			}
 		});
 
-		DecimalFormat df =   new DecimalFormat  ( ",##0.00" );
+		DecimalFormat df = new DecimalFormat(",##0.00");
 		String formated = df.format(mistakes);
 		builder.setMessage("ID:" + id + ";" + "Time: " + duration + "; Accuracy: " + formated + "; Keyboard: " + keyboard);
 		AlertDialog dialog = builder.create();
