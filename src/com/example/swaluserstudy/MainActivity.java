@@ -83,11 +83,13 @@ public class MainActivity extends Activity implements OnKeyListener, TextWatcher
 	SharedPreferences.Editor editor;
 	FileWriter fw;
 	BufferedWriter bw;
+	TextTimeStampSaver ttss;
 
 	private SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("d MMM yyyy  HH:mm:ss.SSS", Locale.US);
 
 	String FILENAME;
 	String COLUMN_NAMES = "ID;Keyboard;Timestamp;Duration;Accuracy;Mistakes;TextToEnter;EnteredText\n";
+	int nextTextID;
 
 	public MainActivity() {
 		// TODO Auto-generated constructor stub
@@ -111,6 +113,12 @@ public class MainActivity extends Activity implements OnKeyListener, TextWatcher
 		sharedPref = getPreferences(Context.MODE_PRIVATE);
 		editor = sharedPref.edit();
 
+		int sp_text = sharedPref.getInt("TextID", 0);
+		nextTextID = sp_text;
+
+		if (nextTextID >= fileList.length)
+			buildStudyFinishedDialog();
+
 		int sp_id = sharedPref.getInt("ID", DEFAULT_ID);
 		Log.i("SP", Integer.toString(sp_id));
 
@@ -128,7 +136,7 @@ public class MainActivity extends Activity implements OnKeyListener, TextWatcher
 			keyboard = sp_keyboard;
 		}
 
-		buildStartDialog();
+		// buildStartDialog();
 
 		textToEnter = (TextView) findViewById(R.id.textToEnter);
 
@@ -142,6 +150,14 @@ public class MainActivity extends Activity implements OnKeyListener, TextWatcher
 		textEntered.setOnKeyListener(this);
 
 		textEntered.addTextChangedListener(this);
+
+		loadNextText(nextTextID);
+
+		editor.putInt("TextID", nextTextID + 1);
+		editor.commit();
+
+		ttss = new TextTimeStampSaver(this, textToEnter.getText().toString(), id, sp_text);
+		ttss.openFile();
 
 	}
 
@@ -256,6 +272,7 @@ public class MainActivity extends Activity implements OnKeyListener, TextWatcher
 		// SpannableString(getResources().getString(R.string.source_text));
 		SpannableString text = new SpannableString(studyText);
 		// make text (characters 0 to counter) red
+
 		if (!isLastKey(textToEnter.length(), textEntered.getText().length())) {
 			text.setSpan(new UnderlineSpan(), counter + 1, counter + 2, 0); // unterstreiche
 																			// aktiven
@@ -290,6 +307,7 @@ public class MainActivity extends Activity implements OnKeyListener, TextWatcher
 
 		// sobald letzter keystroke getätigt wurde startet der EndDialog mit den
 		// Ergebnissen
+		ttss.addCharacter(s + "");
 		if (isLastKey(textToEnter.length(), textEntered.getText().length())) {
 			timestampEnd = System.currentTimeMillis();
 			Log.i("timestampend", timestampEnd + "");
@@ -330,6 +348,8 @@ public class MainActivity extends Activity implements OnKeyListener, TextWatcher
 			} catch (Exception e) {
 				Toast.makeText(getBaseContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
 			}
+
+			ttss.writeCSVLineToFile();
 
 			buildEndDialog(id, duration, accuracy);
 
@@ -477,6 +497,27 @@ public class MainActivity extends Activity implements OnKeyListener, TextWatcher
 		dialog.show();
 	}
 
+	public void buildStudyFinishedDialog() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				finish();
+
+			}
+		});
+
+		// DecimalFormat df = new DecimalFormat(",##0.00");
+		// String formated = df.format(mistakes);
+		// builder.setMessage("ID:" + id + ";" + "Time: " + duration +
+		// "; Accuracy: " + formated + "; Keyboard: " + keyboard);
+		builder.setMessage("The User Study is over! \n Thank you for participating!");
+		AlertDialog dialog = builder.create();
+		dialog.setCanceledOnTouchOutside(false);
+		dialog.show();
+	}
+
 	@Override
 	public void afterTextChanged(Editable s) {
 		// TODO Auto-generated method stub
@@ -509,6 +550,16 @@ public class MainActivity extends Activity implements OnKeyListener, TextWatcher
 		Double calcMistakes = textToEnter.getText().length() - (accuracy * textToEnter.getText().length());
 
 		return calcMistakes.intValue();
+	}
+
+	public void loadNextText(int selected) {
+		try {
+			studyText = loadText(fileList[selected]);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		textToEnter.setText(studyText);
 	}
 
 }
