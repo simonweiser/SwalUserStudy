@@ -5,14 +5,18 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 import uk.ac.shef.wit.simmetrics.similaritymetrics.Levenshtein;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -66,14 +70,21 @@ public class MainActivity extends Activity implements OnKeyListener, TextWatcher
 
 	int selected = 0; // ausgewählter index des textes
 	int selectedKeyboard = 0;// ausgewählter index des eyboards
-	int id = 0; // standard id
+	int id = 99; // standard id
 	String keyboard = ""; // Name des ausgewäääählätenä keyboäards
 	String[] fileList; // array der mölichen use case texte
 	String[] keyboards; // array der möglichen keyboard layouts im moment DVORA
 						// und NEO
 
+	static final int DEFAULT_ID = 99;
+	static final String DEFAULT_KEYBOARD = "None";
+
+	SharedPreferences sharedPref;
+	SharedPreferences.Editor editor;
 	FileWriter fw;
 	BufferedWriter bw;
+
+	private SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("d MMM yyyy  HH:mm:ss.SSS", Locale.US);
 
 	String FILENAME;
 	String COLUMN_NAMES = "ID;Keyboard;Timestamp;Duration;Accuracy;Mistakes;TextToEnter;EnteredText\n";
@@ -97,8 +108,26 @@ public class MainActivity extends Activity implements OnKeyListener, TextWatcher
 
 		keyboards = getResources().getStringArray(R.array.keyboards);
 
-		buildKeyboardDialog();
-		buildIdDialog();
+		sharedPref = getPreferences(Context.MODE_PRIVATE);
+		editor = sharedPref.edit();
+
+		int sp_id = sharedPref.getInt("ID", DEFAULT_ID);
+		Log.i("SP", Integer.toString(sp_id));
+
+		String sp_keyboard = sharedPref.getString("Keyboard", DEFAULT_KEYBOARD);
+		Log.i("SP", sp_keyboard);
+
+		if (sp_id == DEFAULT_ID && sp_keyboard.equals(DEFAULT_KEYBOARD)) {
+			buildKeyboardDialog();
+			buildIdDialog();
+		} else if (sp_keyboard.equals("QWERTZ")) {
+			id = sp_id;
+			buildKeyboardDialog();
+		} else {
+			id = sp_id;
+			keyboard = sp_keyboard;
+		}
+
 		buildStartDialog();
 
 		textToEnter = (TextView) findViewById(R.id.textToEnter);
@@ -270,7 +299,7 @@ public class MainActivity extends Activity implements OnKeyListener, TextWatcher
 
 			// in CSV datei schreiben
 			try {
-				FILENAME = id + "_" + keyboard + ".csv";
+				FILENAME = "user_" + id + ".csv";
 
 				/** für normales device */
 				String root = Environment.getExternalStorageDirectory().toString();
@@ -287,8 +316,11 @@ public class MainActivity extends Activity implements OnKeyListener, TextWatcher
 													// file
 				bw = new BufferedWriter(fw);
 				bw.append(COLUMN_NAMES);
+				// java.util.Date time=new java.util.Date((long)timestampStart);
 
-				String stringToWrite = id + ";" + keyboard + ";" + timestampStart + ";" + duration + ";" + accuracy + ";" + mistakes + ";" + fileList[selected] + ";" + textEntered.getText().toString() + "\n";
+				String time = DATE_FORMAT.format(new Date(timestampStart));
+
+				String stringToWrite = id + ";" + keyboard + ";" + time + ";" + duration + ";" + accuracy + ";" + mistakes + ";" + fileList[selected] + ";" + textEntered.getText().toString() + "\n";
 
 				bw.append(stringToWrite);
 				bw.close();
@@ -340,10 +372,11 @@ public class MainActivity extends Activity implements OnKeyListener, TextWatcher
 		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int whichButton) {
 				id = Integer.parseInt(input.getEditableText().toString());
-				// Do something with value!
+				editor.putInt("ID", id);
+				editor.commit();
 			}
 		});
-
+		alert.setCancelable(false);
 		alert.show();
 
 	}
@@ -370,10 +403,14 @@ public class MainActivity extends Activity implements OnKeyListener, TextWatcher
 		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int whichButton) {
 				keyboard = keyboards[selectedKeyboard];
+				editor.putString("Keyboard", keyboard);
+				editor.commit();
 				dialog.dismiss();
 				// Do something with value!
 			}
 		});
+
+		alert.setCancelable(false);
 		alert.show();
 
 	}
@@ -411,6 +448,7 @@ public class MainActivity extends Activity implements OnKeyListener, TextWatcher
 			}
 		});
 		AlertDialog dialog = builder.create();
+		dialog.setCanceledOnTouchOutside(false);
 		dialog.show();
 	}
 
@@ -420,19 +458,22 @@ public class MainActivity extends Activity implements OnKeyListener, TextWatcher
 	 */
 	public void buildEndDialog(int id, long duration, double mistakes) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setPositiveButton("RESTART", new DialogInterface.OnClickListener() {
+		builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				restartActivity();
+				finish();
 
 			}
 		});
 
-		DecimalFormat df = new DecimalFormat(",##0.00");
-		String formated = df.format(mistakes);
-		builder.setMessage("ID:" + id + ";" + "Time: " + duration + "; Accuracy: " + formated + "; Keyboard: " + keyboard);
+		// DecimalFormat df = new DecimalFormat(",##0.00");
+		// String formated = df.format(mistakes);
+		// builder.setMessage("ID:" + id + ";" + "Time: " + duration +
+		// "; Accuracy: " + formated + "; Keyboard: " + keyboard);
+		builder.setMessage("You're done!");
 		AlertDialog dialog = builder.create();
+		dialog.setCanceledOnTouchOutside(false);
 		dialog.show();
 	}
 
