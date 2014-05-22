@@ -25,6 +25,11 @@ public class TextTimeStampSaver {
 	private FileWriter fw;
 	private BufferedWriter bw;
 	private int counter = 1;
+	private String CHARACTERS_INPUT = "";
+	private String csv_line_unixTime = "";
+	private String csv_line_difference = "";
+	private long lastTimeStamp;
+	private boolean firstTimeStamp = true;
 
 	public TextTimeStampSaver(Context context, String text, int id, int textID) {
 		this.context = context;
@@ -33,7 +38,11 @@ public class TextTimeStampSaver {
 		this.textID = textID;
 	}
 
-	public void openFile() {
+	public void setID(int id) {
+		this.id = id;
+	}
+
+	private void openFile() {
 		String root = Environment.getExternalStorageDirectory().toString();
 		File path = new File(root + "/swal_study");
 
@@ -78,7 +87,18 @@ public class TextTimeStampSaver {
 
 	public void addCharacter(String character) {
 		String separator = ";";
-		String time = DATE_FORMAT.format(new Date(System.currentTimeMillis()));
+		long unixTime = System.currentTimeMillis();
+		String time = DATE_FORMAT.format(new Date(unixTime));
+		long difference;
+
+		if (firstTimeStamp) {
+			difference = 0;
+			firstTimeStamp = false;
+		} else {
+			difference = unixTime - lastTimeStamp;
+		}
+
+		lastTimeStamp = unixTime;
 
 		Log.i("counter", Integer.toString(counter));
 		Log.i("textl", Integer.toString(text.length()));
@@ -88,20 +108,33 @@ public class TextTimeStampSaver {
 
 		csv_line_timestamp = csv_line_timestamp + time + separator;
 		csv_line_characters = csv_line_characters + character + separator;
+		csv_line_unixTime = csv_line_unixTime + unixTime + separator;
+		csv_line_difference = csv_line_difference + difference + separator;
 		counter++;
 
 	}
 
+	public void addUserInput(String input) {
+		for (int i = 0; i < text.length(); i++) {
+			String separator = ";";
+
+			if (i == text.length() - 1)
+				separator = "\n";
+
+			CHARACTERS_INPUT = CHARACTERS_INPUT + input.charAt(i) + separator;
+		}
+		csv_line_characters = CHARACTERS_INPUT;
+	}
+
 	public void writeCSVLineToFile() {
-		// TODO
-		// TODO
-		// TODO
-		// TODO
-		// TODO
+		openFile();
 
 		try {
-			// bw.append(csv_line_characters);
+
+			bw.append(csv_line_characters);
 			bw.append(csv_line_timestamp);
+			bw.append(csv_line_unixTime);
+			bw.append(csv_line_difference);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

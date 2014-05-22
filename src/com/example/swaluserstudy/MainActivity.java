@@ -128,6 +128,7 @@ public class MainActivity extends Activity implements OnKeyListener, TextWatcher
 		if (sp_id == DEFAULT_ID && sp_keyboard.equals(DEFAULT_KEYBOARD)) {
 			buildKeyboardDialog();
 			buildIdDialog();
+
 		} else if (sp_keyboard.equals("QWERTZ")) {
 			id = sp_id;
 			buildKeyboardDialog();
@@ -157,7 +158,7 @@ public class MainActivity extends Activity implements OnKeyListener, TextWatcher
 		editor.commit();
 
 		ttss = new TextTimeStampSaver(this, textToEnter.getText().toString(), id, sp_text);
-		ttss.openFile();
+		// ttss.openFile();
 
 	}
 
@@ -349,6 +350,8 @@ public class MainActivity extends Activity implements OnKeyListener, TextWatcher
 				Toast.makeText(getBaseContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
 			}
 
+			ttss.addUserInput(textEntered.getText().toString());
+			ttss.setID(id);
 			ttss.writeCSVLineToFile();
 
 			buildEndDialog(id, duration, accuracy);
