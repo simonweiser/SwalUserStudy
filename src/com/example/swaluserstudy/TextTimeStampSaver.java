@@ -30,6 +30,7 @@ public class TextTimeStampSaver {
 	private String csv_line_difference = "";
 	private long lastTimeStamp;
 	private boolean firstTimeStamp = true;
+	private File file;
 
 	public TextTimeStampSaver(Context context, String text, int id, int textID) {
 		this.context = context;
@@ -53,7 +54,7 @@ public class TextTimeStampSaver {
 
 		path.mkdirs();
 		FILENAME = id + "_textID_" + textID + ".csv";
-		File file = new File(path, FILENAME);
+		file = new File(path, FILENAME);
 		try {
 			fw = new FileWriter(file, true);
 		} catch (IOException e1) {
@@ -147,5 +148,7 @@ public class TextTimeStampSaver {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		MediaScannerHelp mediaScannerHelpOverviewFile = new MediaScannerHelp(context);
+		mediaScannerHelpOverviewFile.addFile(file.getAbsolutePath());
 	}
 }

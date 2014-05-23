@@ -31,5 +31,5 @@ public class MediaScannerHelp implements MediaScannerConnectionClient {
 		 Log.i("ScannerHelper","Scan done - path:" + path + " uri:" + uri);
 
 	}
-
+	
 }
