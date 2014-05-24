@@ -19,7 +19,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.Editable;
@@ -41,8 +40,7 @@ import android.widget.TextView;
 import android.widget.TextView.BufferType;
 import android.widget.Toast;
 
-public class MainActivity extends Activity implements OnKeyListener,
-		TextWatcher {
+public class MainActivity extends Activity implements OnKeyListener, TextWatcher {
 	/*
 	 * Layout komponenten
 	 */
@@ -87,8 +85,7 @@ public class MainActivity extends Activity implements OnKeyListener,
 	BufferedWriter bw;
 	TextTimeStampSaver ttss;
 
-	private SimpleDateFormat DATE_FORMAT = new SimpleDateFormat(
-			"d MMM yyyy  HH:mm:ss.SSS", Locale.US);
+	private SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("d MMM yyyy  HH:mm:ss.SSS", Locale.US);
 
 	String FILENAME;
 	String COLUMN_NAMES = "ID;Keyboard;Timestamp;Duration;Accuracy;Mistakes;TextToEnter;EnteredText\n";
@@ -162,8 +159,7 @@ public class MainActivity extends Activity implements OnKeyListener,
 		editor.putInt("TextID", nextTextID + 1);
 		editor.commit();
 
-		ttss = new TextTimeStampSaver(this, textToEnter.getText().toString(),
-				id, sp_text);
+		ttss = new TextTimeStampSaver(this, textToEnter.getText().toString(), id, sp_text);
 		// ttss.openFile();
 
 	}
@@ -184,12 +180,11 @@ public class MainActivity extends Activity implements OnKeyListener,
 													// zur
 													// Orientierung
 
-		text.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), lastSpace,
-				nextSpace, 0);// Färbe
-								// zu
-								// schreibendes
-								// Wort
-								// FETT
+		text.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), lastSpace, nextSpace, 0);// Färbe
+																								// zu
+																								// schreibendes
+																								// Wort
+																								// FETT
 		// text.setSpan(new ForegroundColorSpan(Color.GREEN), lastSpace,
 		// nextSpace, 0);
 		textToEnter.setText(text, BufferType.SPANNABLE);
@@ -245,8 +240,7 @@ public class MainActivity extends Activity implements OnKeyListener,
 	}
 
 	@Override
-	public void beforeTextChanged(CharSequence s, int start, int count,
-			int after) {
+	public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 		// TODO Auto-generated method stub
 
 	}
@@ -270,8 +264,7 @@ public class MainActivity extends Activity implements OnKeyListener,
 	public void onTextChanged(CharSequence s, int start, int before, int count) {
 		// if (textToEnter.length() <= textEntered.getText().length()) {
 		// Log.i("text", textToEnter.getText().charAt(counter) + "");
-		Log.i("textLength", textToEnter.getText().length() + ";"
-				+ textEntered.getText().length());
+		Log.i("textLength", textToEnter.getText().length() + ";" + textEntered.getText().length());
 		if (nextSpace == counter)
 			lastSpace = counter; // sobald nächstes wort erreicht ist setze
 									// lastSpace auf das alte nextSpace
@@ -294,12 +287,11 @@ public class MainActivity extends Activity implements OnKeyListener,
 																					// geschriebene
 																					// buchstaben
 																					// grau
-			text.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),
-					lastSpace, nextSpace, 0);// Färbe
-												// zu
-												// schreibendes
-												// Wort
-												// FETT
+			text.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), lastSpace, nextSpace, 0);// Färbe
+																									// zu
+																									// schreibendes
+																									// Wort
+																									// FETT
 			// text.setSpan(new ForegroundColorSpan(Color.GREEN), lastSpace,
 			// nextSpace, 0);
 			textToEnter.setText(text, BufferType.SPANNABLE); // Formatierungen
@@ -323,25 +315,16 @@ public class MainActivity extends Activity implements OnKeyListener,
 			timestampEnd = System.currentTimeMillis();
 			Log.i("timestampend", timestampEnd + "");
 			duration = timestampEnd - timestampStart;
-			double accuracy = compareStrings(textEntered.getText().toString(),
-					textToEnter.getText().toString());
-			int mistakes = calculateMistakes(textEntered.getText().toString(),
-					textToEnter.getText().toString());
+			double accuracy = compareStrings(textEntered.getText().toString(), textToEnter.getText().toString());
+			int mistakes = calculateMistakes(textEntered.getText().toString(), textToEnter.getText().toString());
 
 			// in CSV datei schreiben
 			try {
 				FILENAME = "user_" + id + ".csv";
 
 				/** für normales device */
-				String root = Environment.getExternalStorageDirectory()
-						.toString();
+				String root = Environment.getExternalStorageDirectory().toString();
 				File path = new File(root + "/swal_study");
-
-				/** für emulator (code für device auskommentieren) */
-				// File path = new
-				// File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString()
-				// + "/swal_study");
-
 				path.mkdirs();
 				File file = new File(path, FILENAME);
 				overviewFile = file.getAbsolutePath();
@@ -354,34 +337,27 @@ public class MainActivity extends Activity implements OnKeyListener,
 
 				String time = DATE_FORMAT.format(new Date(timestampStart));
 
-				String stringToWrite = id + ";" + keyboard + ";" + time + ";"
-						+ duration + ";" + accuracy + ";" + mistakes + ";"
-						+ fileList[nextTextID] + ";"
-						+ textEntered.getText().toString() + "\n";
+				String stringToWrite = id + ";" + keyboard + ";" + time + ";" + duration + ";" + accuracy + ";" + mistakes + ";" + fileList[nextTextID] + ";" + textEntered.getText().toString() + "\n";
 
 				bw.append(stringToWrite);
 				bw.close();
 				fw.close();
 
 			} catch (Exception e) {
-				Toast.makeText(getBaseContext(), e.getMessage(),
-						Toast.LENGTH_SHORT).show();
+				Toast.makeText(getBaseContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
 			}
 
 			ttss.addUserInput(textEntered.getText().toString());
 			ttss.setID(id);
 			ttss.writeCSVLineToFile();
-			MediaScannerHelp mediaScannerHelpOverviewFile = new MediaScannerHelp(
-					this);
+			MediaScannerHelp mediaScannerHelpOverviewFile = new MediaScannerHelp(this);
 			mediaScannerHelpOverviewFile.addFile(overviewFile);
 
 			buildEndDialog(id, duration, accuracy);
 
 			textEntered.setFilters(new InputFilter[] { new InputFilter() {
-				public CharSequence filter(CharSequence src, int start,
-						int end, Spanned dst, int dstart, int dend) {
-					return src.length() < 1 ? dst.subSequence(dstart, dend)
-							: "";
+				public CharSequence filter(CharSequence src, int start, int end, Spanned dst, int dstart, int dend) {
+					return src.length() < 1 ? dst.subSequence(dstart, dend) : "";
 				}
 			} });
 
@@ -555,8 +531,7 @@ public class MainActivity extends Activity implements OnKeyListener,
 	 * Activity neustart am ende
 	 */
 	public void restartActivity() {
-		Intent i = getBaseContext().getPackageManager()
-				.getLaunchIntentForPackage(getBaseContext().getPackageName());
+		Intent i = getBaseContext().getPackageManager().getLaunchIntentForPackage(getBaseContext().getPackageName());
 		i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		startActivity(i);
 
@@ -575,8 +550,7 @@ public class MainActivity extends Activity implements OnKeyListener,
 	public int calculateMistakes(String a, String b) {
 
 		Double accuracy = compareStrings(a, b);
-		Double calcMistakes = textToEnter.getText().length()
-				- (accuracy * textToEnter.getText().length());
+		Double calcMistakes = textToEnter.getText().length() - (accuracy * textToEnter.getText().length());
 
 		return calcMistakes.intValue();
 	}

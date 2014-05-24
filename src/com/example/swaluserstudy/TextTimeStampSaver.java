@@ -13,7 +13,6 @@ import android.os.Environment;
 import android.util.Log;
 
 public class TextTimeStampSaver {
-	@SuppressWarnings("unused")
 	private Context context;
 	private String text;
 	private String csv_line_timestamp = "";
@@ -46,12 +45,6 @@ public class TextTimeStampSaver {
 	private void openFile() {
 		String root = Environment.getExternalStorageDirectory().toString();
 		File path = new File(root + "/swal_study");
-
-		/** für emulator (code für device auskommentieren) */
-		// File path = new
-		// File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString()
-		// + "/swal_study");
-
 		path.mkdirs();
 		FILENAME = id + "_textID_" + textID + ".csv";
 		file = new File(path, FILENAME);
